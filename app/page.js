@@ -511,36 +511,44 @@ export default function Dashboard() {
   const [noteSaving, setNoteSaving] = useState(false);
   const [noteMsg, setNoteMsg] = useState("");
 
-  const fetchAll = useCallback(async () => {
-    try {
-      const [dRes, sRes, kRes, hRes] = await Promise.all([
-        fetch("/api/data"),
-        fetch("/api/signals"),
-        fetch("/api/kestrel"),
-        fetch("/api/brindle"),
-      ]);
-      const dJson = await dRes.json();
-      const sJson = await sRes.json();
-      const kJson = await kRes.json();
-      const hJson = await hRes.json();
+const fetchAll = useCallback(async () => {
+  try {
+    // First batch
+    const [dRes, sRes] = await Promise.all([
+      fetch("/api/data"),
+      fetch("/api/signals"),
+    ]);
+    const dJson = await dRes.json();
+    const sJson = await sRes.json();
 
-      if (dJson.success) {
-        setData({
-          ...dJson.data,
-          kestrel: kJson.success ? kJson.data : null,
-          brindle: hJson.success ? hJson.data : null,
-        });
-      } else {
-        setError(dJson.error);
-      }
-      if (sJson.success) setSignals(
-        Array.isArray(sJson.data) ? sJson.data : sJson.data?.signals || []
-      );
-      setLastUpdated(new Date().toLocaleTimeString());
-      setError(null);
-    } catch (e) { setError(e.message); }
-  }, []);
+    // Wait 2 seconds
+    await new Promise(r => setTimeout(r, 2000));
 
+    // Second batch
+    const kRes = await fetch("/api/kestrel");
+    const kJson = await kRes.json();
+
+    // Wait 2 more seconds
+    await new Promise(r => setTimeout(r, 2000));
+
+    // Third batch
+    const hRes = await fetch("/api/brindle");
+    const hJson = await hRes.json();
+
+    if (dJson.success) {
+      setData({
+        ...dJson.data,
+        kestrel: kJson.success ? kJson.data : null,
+        brindle: hJson.success ? hJson.data : null,
+      });
+    }
+    if (sJson.success) setSignals(
+      Array.isArray(sJson.data) ? sJson.data : sJson.data?.signals || []
+    );
+    setLastUpdated(new Date().toLocaleTimeString());
+    setError(null);
+  } catch (e) { setError(e.message); }
+}, []);
   useEffect(() => {
     fetchAll();
     const t = setInterval(fetchAll, REFRESH);
