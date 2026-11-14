@@ -11,7 +11,7 @@ const TRUST_STYLES = {
   cold:    { bg: "#fee2e2", text: "#b91c1c", border: "#dc2626" },
 };
 
-const ACCOUNT_COLORS = { A: "#6366f1", B: "#0ea5e9", K: "#10b981" };
+const ACCOUNT_COLORS = { A: "#6366f1", B: "#0ea5e9", K: "#10b981", H: "#f59e0b" };
 
 const STATIC_INTEL = {
   A: {
@@ -30,7 +30,7 @@ const STATIC_INTEL = {
       { question:"Who replaces Rhys Calder?", matters:"Every open deal goes through him. Without successor, renewal and tender work stops.", ask:"Rhys Calder — before January" },
       { question:"What does Ewan finance director need to approve Metro Central docks?", matters:"$180K offer requires knowing finance director requirements beyond just Ewan.", ask:"Ewan Brooks" },
       { question:"Has engineering sent the data-flow pack to Fatima Osei?", matters:"Fatima will sign DPIA same day it arrives. Tarn Valley + Norwold blocked until then.", ask:"Pranjal Suyal / SRV · fact: srv_dataflow" },
-      { question:"Who funds and staffs the 30-dock stadium plan?", matters:"Rhys investigating before Friday board. No staffing plan exists. Quote cannot be given without this.", ask:"Rhys Calder + Karen Mbeki" },
+      { question:"Who funds and staffs the 30-dock stadium plan?", matters:"Rhys investigating before Friday board. No staffing plan exists.", ask:"Rhys Calder + Karen Mbeki" },
     ],
   },
   B: {
@@ -41,34 +41,53 @@ const STATIC_INTEL = {
     ],
     risks: [
       { title:"Three docks stopped flying — no ticket raised", detail:"Three most active docks: zero flights last two weeks. All online. No one at Aldermoor has noticed.", by:"Investigate today", level:"Critical", source:"Signal 30-Nov · Account B" },
-      { title:"Network segmentation cuts all docks offline", detail:"Owen Fitch IT project starts in four months. Without exceptions filed now, all 14 docks go dark. Plant 3 first.", by:"4 months", level:"Critical", source:"of_seg_2 · network_plan (verified)" },
+      { title:"Network segmentation cuts all docks offline", detail:"Owen Fitch IT project starts in four months. Without exceptions filed now, all 14 docks go dark.", by:"4 months", level:"Critical", source:"of_seg_2 · network_plan (verified)" },
       { title:"Deputy leaving — rollout knowledge undocumented", detail:"Stefan deputy set up every plant that flies. Nothing written down. Leaves soon.", by:"Before departure", level:"High", source:"sr_repl_2 · ba_deputy_0" },
-      { title:"Insurance review in 5 months", detail:"Insurer reviews discount in 5 months. Idle docks put the 180K saving at risk. Consistent logs needed.", by:"5 months", level:"High", source:"jt_review_2 · insurer_premium_letter (verified)" },
+      { title:"Insurance review in 5 months", detail:"Insurer reviews discount in 5 months. Idle docks put the 180K saving at risk.", by:"5 months", level:"High", source:"jt_review_2 · insurer_premium_letter (verified)" },
     ],
     gaps: [
       { question:"Why did three docks stop flying in the last two weeks?", matters:"Insurance discount depends on consistent flight logs. Churn signal if unresolved.", ask:"Pranjal Suyal (tickets) + Stefan Roy" },
-      { question:"Has Owen Fitch received the ports and services list?", matters:"We committed to providing it. Without it Owen cannot file exceptions and all docks go offline.", ask:"Owen Fitch · fact: of_offer_3" },
+      { question:"Has Owen Fitch received the ports and services list?", matters:"IT segmentation will cut docks without exceptions. We committed to provide this.", ask:"Owen Fitch · fact: of_offer_3" },
       { question:"Who is the sister company security director?", matters:"Stefan described an old colleague who decides. Never introduced. $1.2M depends on them.", ask:"Stefan Roy" },
-      { question:"Are the three guard contract renewals tracking drone savings?", matters:"Three contracts renew in four months. First chance to book verified savings into finance.", ask:"Nadia Rahman · fact: nr_evidence_2" },
+      { question:"Are the three guard contract renewals tracking drone savings?", matters:"Three contracts renew in four months. First chance to book verified savings.", ask:"Nadia Rahman · fact: nr_evidence_2" },
     ],
   },
   K: {
     moves: [
       { rank:1, action:"Call Dana Whitfield today — first human contact from FlytBase. Acknowledge the unanswered October email and set a go-live plan date", owner:"Kusumanjali", by:"Today", deal:"k_dana_email_or1 — renewal at risk" },
       { rank:2, action:"Arrange certified pilot for KE-D01 commissioning flight and notify insurer through Lucy Pratt before any flight", owner:"Kusumanjali", by:"Before first flight", deal:"k_golive_or1 — £14,000" },
-      { rank:3, action:"Prepare go-live plan for Dana and board focused on night patrol of two entrances — not mapping the whole estate", owner:"Kusumanjali", by:"Before board meeting", deal:"k_board_pays_or1 — board votes on security budget" },
+      { rank:3, action:"Prepare go-live plan for Dana and board focused on night patrol of two entrances not mapping the whole estate", owner:"Kusumanjali", by:"Before board meeting", deal:"k_board_pays_or1" },
     ],
     risks: [
       { title:"Dana email unanswered since 19 October", detail:"Customer emailed asking when dock starts flying. Only automatic reply sent. No human contact from FlytBase ever.", by:"Today — 26 days overdue", level:"Critical", source:"emails/2026-10-19_dana_when.txt · verified" },
-      { title:"Dock KE-D01 never commissioned — zero flights", detail:"Registered 14 Sep 2026. Commissioned: null. Zero flights every week since install. Customer paying for nothing.", by:"Needs commissioning now", level:"Critical", source:"devices.json · usage_weekly.csv · verified" },
-      { title:"Insurer not notified — policy void if dock flies", detail:"Insurance schedule confirmed dock not declared. Any aerial equipment must be notified before use. Flying now voids policy.", by:"Before first flight", level:"Critical", source:"K_insurance_schedule_or1 · verified" },
-      { title:"Contract renewal 13 Sep 2027 — no automatic renewal", detail:"£14,000/year contract. No automatic renewal. Customer has never flown. Churn risk is high without go-live before renewal.", by:"13 Sep 2027", level:"High", source:"contract.txt · invoices.json · verified" },
+      { title:"Dock KE-D01 never commissioned — zero flights", detail:"Registered 14 Sep 2026. Commissioned: null. Zero flights every week since install.", by:"Needs commissioning now", level:"Critical", source:"devices.json · usage_weekly.csv · verified" },
+      { title:"Insurer not notified — policy void if dock flies", detail:"Insurance schedule confirmed dock not declared. Flying now voids policy.", by:"Before first flight", level:"Critical", source:"K_insurance_schedule_or1 · verified" },
+      { title:"Contract renewal 13 Sep 2027 — no automatic renewal", detail:"£14,000/year contract. Customer has never flown. Churn risk is high.", by:"13 Sep 2027", level:"High", source:"contract.txt · invoices.json · verified" },
     ],
     gaps: [
-      { question:"Who can provide a certified pilot for the commissioning flight?", matters:"Dock cannot fly without one. Operator training was not included in the reseller order.", ask:"Kusumanjali + FlytBase ops team · fact: k_not_commissioned_or1" },
-      { question:"Has Lucy Pratt been contacted to notify the insurer?", matters:"Flying without notifying insurer voids property insurance. Must happen before first flight.", ask:"Lucy Pratt · k_lucy_or1" },
-      { question:"What does the board need to approve additional dock budget?", matters:"Any spend beyond original purchase needs board vote first Monday of each month.", ask:"Graham Okafor · k_graham_or1" },
-      { question:"Has the south entrance ever been assessed for drone coverage?", matters:"Dana wants second dock for south entrance but it was never assessed at install.", ask:"Dana Whitfield · k_south_unassessed_or1" },
+      { question:"Who can provide a certified pilot for the commissioning flight?", matters:"Dock cannot fly without one. Operator training not included in reseller order.", ask:"Kusumanjali + FlytBase ops team" },
+      { question:"Has Lucy Pratt been contacted to notify the insurer?", matters:"Flying without notifying insurer voids property insurance.", ask:"Lucy Pratt · k_lucy_or1" },
+      { question:"What does the board need to approve additional dock budget?", matters:"Any spend beyond original purchase needs board vote.", ask:"Graham Okafor · k_graham_or1" },
+      { question:"Has south entrance been assessed for drone coverage?", matters:"Dana wants second dock but south entrance never assessed at install.", ask:"Dana Whitfield · k_south_unassessed_or1" },
+    ],
+  },
+  H: {
+    moves: [
+      { rank:1, action:"Document Tom Reyes rollout steps, patrol routes and alert rota before his contract ends next month", owner:"Kusumanjali + Tom Reyes", by:"Before Tom leaves · minute 43200", deal:"h_rollout_pack_or1 — $12,000" },
+      { rank:2, action:"Send Elena Varga the data retention and storage details she requested in April — vendor never replied in 7 months", owner:"Kusumanjali + FlytBase support", by:"This week", deal:"h_yard_or1 — $30,000" },
+      { rank:3, action:"Register all dock devices with Sam Okoye IT before autumn network segmentation cuts them offline", owner:"Kusumanjali + Sam Okoye", by:"Before autumn · minute 129600", deal:"h_renewal_or1 — $96,000 at risk" },
+    ],
+    risks: [
+      { title:"Tom Reyes leaving — all rollout knowledge undocumented", detail:"Launch steps, patrol routes and alert rota all in Tom's head. Contract ends next month. Nothing written down.", by:"Next month · minute 43200", level:"Critical", source:"h_contractor_leaving_or1 · Tom Reyes told" },
+      { title:"Network segmentation cuts docks offline in autumn", detail:"All yard devices move to segmented network. Docks not registered with IT will lose access. No docks registered yet.", by:"Autumn · minute 129600", level:"Critical", source:"h_segmentation_or1 · verified by h_network_notice_or1" },
+      { title:"Priya will not renew without verified savings", detail:"Finance has not seen workings behind $400K saving. No patrol contract changed. Priya signs renewal.", by:"Renewal decision · minute 216000", level:"High", source:"h_finance_renewal_or1 · h_finance_unseen_or1" },
+      { title:"Container yard dock never flown — privacy assessment blocked", detail:"Elena requested vendor data details in April. No reply in 7 months. Privacy assessment cannot be signed.", by:"Unblocked only when vendor replies", level:"High", source:"h_vendor_silent_or1 · verified by h_dp_request_or1" },
+    ],
+    gaps: [
+      { question:"Has anyone at FlytBase replied to Elena April data retention request?", matters:"Container yard dock cannot go live without it. $30K deal and privacy compliance both blocked.", ask:"Pranjal Suyal / FlytBase support · h_vendor_silent_or1" },
+      { question:"What patrol hours have actually been replaced by drones?", matters:"Priya will not renew on Marcus estimate alone. Real patrol contract changes needed to verify $400K saving.", ask:"Priya Nair · h_finance_unseen_or1" },
+      { question:"Which dock devices are registered with Sam Okoye IT?", matters:"Unregistered devices lose network access in autumn segmentation. No docks registered yet.", ask:"Sam Okoye · h_segmentation_or1" },
+      { question:"What would Marcus need to approve docks for two more harbours?", matters:"Expansion identified but no details. Depends on renewal success and verified ROI first.", ask:"Marcus Hale · h_expand_wish_or1" },
     ],
   },
 };
@@ -97,7 +116,6 @@ function buildKestrelAccount(kestrelData) {
   const invoices = records.find(r=>r.kind==="invoices")?.data;
   const dock = devices?.docks?.[0];
   const invoice = invoices?.invoices?.[0];
-
   return {
     id: "K",
     name: "Kestrel Estates",
@@ -108,31 +126,39 @@ function buildKestrelAccount(kestrelData) {
       { id:"k_lucy_or1", name:"Lucy Pratt", role:"Insurance broker", relationship:"neutral", available:true },
     ],
     facts: [
-      { id:"k_dock_never_flown", text:`Dock ${dock?.dock_id || "KE-D01"} registered ${dock?.registered || "14 Sep 2026"}, commissioned: never. Zero flights every week since install. Last seen online ${dock?.last_seen_online || "2026-11-13"}.`, said_by:"FlytBase device records", status:"verified", verified_by:"devices.json + usage_weekly.csv" },
-      { id:"k_contract_or1", text:`Contract: £${invoice?.amount?.toLocaleString() || "14,000"}/year, invoice ${invoice?.number || "INV-26-0921"}, paid by reseller. Term ends ${profile?.renewal?.term_ends || "13 Sep 2027"}. No automatic renewal. Operator training not included.`, said_by:"FlytBase contracts", status:"verified", verified_by:"contract.txt + invoices.json" },
+      { id:"k_dock_never_flown", text:`Dock ${dock?.dock_id||"KE-D01"} registered ${dock?.registered||"14 Sep 2026"}, commissioned: never. Zero flights every week since install. Last seen online ${dock?.last_seen_online||"2026-11-13"}.`, said_by:"FlytBase device records", status:"verified", verified_by:"devices.json + usage_weekly.csv" },
+      { id:"k_contract_or1", text:`Contract: £${invoice?.amount?.toLocaleString()||"14,000"}/year, invoice ${invoice?.number||"INV-26-0921"}, paid by reseller. Term ends ${profile?.renewal?.term_ends||"13 Sep 2027"}. No automatic renewal. Operator training not included.`, said_by:"FlytBase contracts", status:"verified", verified_by:"contract.txt + invoices.json" },
       { id:"k_dana_email_or1", text:"Dana Whitfield emailed 19 Oct asking when dock starts flying. Only automatic acknowledgement sent. No human reply on file. No FlytBase person has ever spoken to this customer.", said_by:"Dana Whitfield", status:"verified", verified_by:"emails/2026-10-19_dana_when.txt + profile.json" },
-      { id:"k_wrong_usecase", text:"Installer ordered dock for mapping the whole estate. Customer actually needs night patrol of two entrances. These are different requirements.", said_by:"FlytBase deal history", status:"verified", verified_by:"deal_history.json" },
-      { id:"k_insurer_not_told_or1", text:"Insurance schedule confirmed: dock not declared. Policy 01 Apr 2026 to 31 Mar 2027. Any new aerial or robotic equipment must be notified to insurer before use. Flying now voids policy.", said_by:"Lucy Pratt", status:"verified", verified_by:"K_insurance_schedule_or1" },
-      { id:"k_no_pilot_or1", text:"Nobody at the estate holds a drone pilot certificate. Dana assumed the system flies itself once switched on. Operator training was not included in the reseller order.", said_by:"Dana Whitfield", status:"told", verified_by:"k_not_commissioned_or1" },
+      { id:"k_wrong_usecase", text:"Installer ordered dock for mapping the whole estate. Customer actually needs night patrol of two entrances.", said_by:"FlytBase deal history", status:"verified", verified_by:"deal_history.json" },
+      { id:"k_insurer_not_told_or1", text:"Insurance schedule confirmed: dock not declared. Policy 01 Apr 2026 to 31 Mar 2027. Any new aerial equipment must be notified before use. Flying now voids policy.", said_by:"Lucy Pratt", status:"verified", verified_by:"K_insurance_schedule_or1" },
+      { id:"k_no_pilot_or1", text:"Nobody at the estate holds a drone pilot certificate. Dana assumed the system flies itself once switched on.", said_by:"Dana Whitfield", status:"told" },
     ],
     offers: [],
     opportunities: [
       { id:"k_golive_or1", title:"Get north-entrance dock flying night patrols", stage:"qualified", worth_up_to:14000, blocker:{text:"No certified pilot, dock KE-D01 never commissioned, insurer not notified",status:"open"}, deadline:{text:"Board meeting: residents vote on renewing security budget",soon:true,passed:false} },
-      { id:"k_south_or1", title:"Second dock for south entrance", stage:"identified", worth_up_to:null, blocker:null, deadline:null },
+      { id:"k_south_or1", title:"Second dock for the south entrance", stage:"identified", worth_up_to:null, blocker:null, deadline:null },
     ],
     deadlines: [
       { text:"Go-live plan promised to Dana — overdue since October 2026", passed:false },
-      { text:"Contract renewal: 13 Sep 2027. No automatic renewal. Customer has never flown.", passed:false },
+      { text:"Contract renewal: 13 Sep 2027. No automatic renewal.", passed:false },
     ],
     files: [
-      { id:"contract.txt", title:"Contract — £14,000/year INV-26-0921 paid by reseller", account:"K" },
+      { id:"contract.txt", title:"Contract — £14,000/year INV-26-0921", account:"K" },
       { id:"devices.json", title:"Device KE-D01 — registered 14 Sep, never commissioned", account:"K" },
       { id:"usage_weekly.csv", title:"Usage — 0 flights every week since install", account:"K" },
-      { id:"emails/2026-10-19_dana_when.txt", title:"Dana email — unanswered since 19 Oct 2026", account:"K" },
-      { id:"invoices.json", title:"Invoice INV-26-0921 — £14,000 paid by reseller", account:"K" },
+      { id:"emails/2026-10-19_dana_when.txt", title:"Dana email — unanswered since 19 Oct", account:"K" },
       { id:"K_insurance_schedule_or1", title:"Insurance schedule — dock not declared", account:"K" },
     ],
   };
+}
+
+function buildBrindleAccount(brindleData) {
+  if (!brindleData) return null;
+  const accounts = brindleData.accounts || [];
+  const account = accounts.find(a => a.id === "H");
+  const files = (brindleData.files || []).filter(f => f.account === "H");
+  if (!account) return null;
+  return { ...account, files };
 }
 
 function AccountPanel({ account, signals }) {
@@ -151,6 +177,7 @@ function AccountPanel({ account, signals }) {
   const deadlines = account.deadlines || [];
 
   const wonOffers = offers.filter(o => o.status === "won");
+  const openOffers = offers.filter(o => o.status === "open");
   const declinedOffers = offers.filter(o => o.status === "declined");
   const totalClosed = wonOffers.reduce((s, o) => s + (o.value || 0), 0);
 
@@ -169,8 +196,12 @@ function AccountPanel({ account, signals }) {
           <div style={{ fontSize:13, color:"rgba(255,255,255,0.75)", marginTop:3 }}>{account.official_story}</div>
         </div>
         <div style={{ textAlign:"right" }}>
-          <div style={{ fontSize:28, fontWeight:900, color:"white" }}>{totalClosed > 0 ? `$${totalClosed.toLocaleString()}` : "£14,000/yr"}</div>
-          <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)" }}>{totalClosed > 0 ? "closed · source: API offers[status=won]" : "contract value · source: invoices.json"}</div>
+          <div style={{ fontSize:28, fontWeight:900, color:"white" }}>
+            {totalClosed > 0 ? `$${totalClosed.toLocaleString()}` : account.id==="K" ? "£14,000/yr" : account.id==="H" ? "$96K renewal" : "—"}
+          </div>
+          <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)" }}>
+            {totalClosed > 0 ? "closed · source: API offers[status=won]" : "contract value · source: MCP API"}
+          </div>
         </div>
       </div>
 
@@ -185,14 +216,16 @@ function AccountPanel({ account, signals }) {
       {deadlines.length > 0 && (
         <div style={{ background:"#fefce8", borderBottom:"2px solid #eab308", padding:"8px 28px" }}>
           {deadlines.map((d,i) => (
-            <span key={i} style={{ fontSize:12, fontWeight:600, color:"#854d0e", marginRight:16 }}>Deadline: {d.text}</span>
+            <span key={i} style={{ fontSize:12, fontWeight:600, color:"#854d0e", marginRight:16 }}>
+              Deadline: {d.text}{d.minute ? ` (minute ${d.minute})` : ""}
+            </span>
           ))}
         </div>
       )}
 
       <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", borderBottom:"1px solid #f1f5f9" }}>
         {[
-          { label:"Closed", val: totalClosed > 0 ? `$${totalClosed.toLocaleString()}` : account.id==="K" ? "£14K/yr" : "—", bg:"#f0fdf4", color:"#15803d", border:"#bbf7d0" },
+          { label:"Closed", val: totalClosed > 0 ? `$${totalClosed.toLocaleString()}` : account.id==="K"?"£14K/yr":account.id==="H"?"$0":"—", bg:"#f0fdf4", color:"#15803d", border:"#bbf7d0" },
           { label:"Opportunities", val:opportunities.length, bg:"#eff6ff", color:"#1d4ed8", border:"#bfdbfe" },
           { label:"Verified facts", val:verifiedFacts.length, bg:"#f5f3ff", color:"#6d28d9", border:"#c4b5fd" },
           { label:"Files", val:files.length, bg:"#fefce8", color:"#854d0e", border:"#fef08a" },
@@ -226,7 +259,7 @@ function AccountPanel({ account, signals }) {
               <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Q1 — What is the book worth?</div>
               <div style={{ border:"1px solid #e2e8f0", borderRadius:10, overflow:"hidden" }}>
                 {wonOffers.length > 0 ? wonOffers.map((o,i) => (
-                  <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background: i%2===0?"#f8fafc":"white", borderBottom: i<wonOffers.length-1?"1px solid #f1f5f9":"none" }}>
+                  <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:i%2===0?"#f8fafc":"white", borderBottom:i<wonOffers.length-1?"1px solid #f1f5f9":"none" }}>
                     <div>
                       <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>{o.title}</div>
                       <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>Source: <span style={{ color:color, fontWeight:700, fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to} · status: {o.status}</div>
@@ -235,11 +268,23 @@ function AccountPanel({ account, signals }) {
                   </div>
                 )) : (
                   <div style={{ padding:"16px", background:"#f8fafc" }}>
-                    <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>Platform subscription — £14,000/year</div>
-                    <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>Source: <span style={{ color:color, fontWeight:700, fontFamily:"monospace" }}>INV-26-0921</span> · paid by reseller 14 Sep 2026 · verified by invoices.json</div>
-                    <div style={{ fontSize:12, color:"#dc2626", marginTop:4 }}>Dock KE-D01 has never flown. Customer has not received value yet.</div>
+                    <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>
+                      {account.id==="K" ? "Platform subscription — £14,000/year" : account.id==="H" ? "No closed deals yet — renewal $96K at stake" : "No closed deals"}
+                    </div>
+                    <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>
+                      {account.id==="K" ? "Source: INV-26-0921 · paid by reseller · verified by invoices.json" : account.id==="H" ? "Source: h_renewal_or1 · renewal decision pending · minute 216000" : ""}
+                    </div>
                   </div>
                 )}
+                {openOffers.map((o,i) => (
+                  <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:"#fffbeb", borderTop:"1px solid #fef08a" }}>
+                    <div>
+                      <div style={{ fontSize:14, fontWeight:600, color:"#854d0e" }}>{o.title} <span style={{ fontSize:11, color:"#b45309" }}>open offer</span></div>
+                      <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>Source: <span style={{ fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to}</div>
+                    </div>
+                    <div style={{ fontSize:15, fontWeight:700, color:"#854d0e", marginLeft:20 }}>${o.value.toLocaleString()}</div>
+                  </div>
+                ))}
                 {declinedOffers.map((o,i) => (
                   <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:"#fef2f2", borderTop:"1px solid #fecaca" }}>
                     <div>
@@ -280,6 +325,20 @@ function AccountPanel({ account, signals }) {
                 ))}
               </div>
             </div>
+
+            {files.length > 0 && (
+              <div style={{ marginTop:24 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10 }}>Data room files</div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:8 }}>
+                  {files.map((f,i) => (
+                    <div key={i} style={{ background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:8, padding:"10px 12px" }}>
+                      <div style={{ fontSize:13, fontWeight:600, color:"#0f172a" }}>{f.title}</div>
+                      <div style={{ fontSize:11, color:"#94a3b8", fontFamily:"monospace", marginTop:3 }}>ID: {f.id}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -320,21 +379,20 @@ function AccountPanel({ account, signals }) {
                 ))}
               </div>
             )}
-
-            {account.id === "K" && (
+            {openOffers.length > 0 && (
               <div style={{ marginBottom:20 }}>
-                <div style={{ fontSize:11, fontWeight:800, color:"#15803d", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dcfce7", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Contract</div>
-                <div style={{ padding:"12px 16px", background:"#f0fdf4", border:"1.5px solid #bbf7d0", borderRadius:10 }}>
-                  <div style={{ display:"flex", justifyContent:"space-between" }}>
-                    <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>Platform subscription — 1 dock KE-D01</div>
-                    <div style={{ fontSize:16, fontWeight:800, color:"#15803d" }}>£14,000/yr</div>
+                <div style={{ fontSize:11, fontWeight:800, color:"#854d0e", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#fef9c3", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Open offers</div>
+                {openOffers.map((o,i) => (
+                  <div key={i} style={{ padding:"12px 16px", background:"#fffbeb", border:"1.5px solid #fef08a", borderRadius:10, marginBottom:8 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between" }}>
+                      <div style={{ fontSize:14, fontWeight:600, color:"#854d0e" }}>{o.title}</div>
+                      <div style={{ fontSize:15, fontWeight:700, color:"#854d0e" }}>${o.value.toLocaleString()}</div>
+                    </div>
+                    <div style={{ fontSize:12, color:"#92400e", marginTop:4 }}>ID: <span style={{ fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to}</div>
                   </div>
-                  <div style={{ fontSize:12, color:"#16a34a", marginTop:4 }}>Source: <span style={{ fontFamily:"monospace" }}>INV-26-0921</span> · paid by reseller · verified by invoices.json + contract.txt</div>
-                  <div style={{ fontSize:12, color:"#dc2626", marginTop:4 }}>Dock KE-D01 never commissioned. Customer has not received value.</div>
-                </div>
+                ))}
               </div>
             )}
-
             <div style={{ marginBottom:20 }}>
               <div style={{ fontSize:11, fontWeight:800, color:"#1d4ed8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dbeafe", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Opportunities</div>
               {opportunities.map((o,i) => (
@@ -344,12 +402,11 @@ function AccountPanel({ account, signals }) {
                     <div style={{ fontSize:15, fontWeight:700, color:"#1d4ed8" }}>{o.worth_up_to ? `up to $${o.worth_up_to.toLocaleString()}` : "TBD"}</div>
                   </div>
                   {o.blocker && <div style={{ fontSize:12, color:"#dc2626", marginTop:4 }}>Blocker: {o.blocker.text}</div>}
-                  {o.deadline && <div style={{ fontSize:12, color:"#b45309", marginTop:4, fontWeight:600 }}>Deadline: {o.deadline.text}</div>}
+                  {o.deadline && <div style={{ fontSize:12, color:"#b45309", marginTop:4, fontWeight:600 }}>Deadline: {o.deadline.text}{o.deadline.minute ? ` · minute ${o.deadline.minute}` : ""}</div>}
                   <div style={{ fontSize:11, color:"#64748b", fontFamily:"monospace", marginTop:4 }}>ID: {o.id}</div>
                 </div>
               ))}
             </div>
-
             {declinedOffers.length > 0 && (
               <div>
                 <div style={{ fontSize:11, fontWeight:800, color:"#b91c1c", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#fee2e2", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Declined</div>
@@ -439,20 +496,6 @@ function AccountPanel({ account, signals }) {
             ))}
           </div>
         )}
-
-        {files.length > 0 && tab==="Overview" && (
-          <div style={{ marginTop:24 }}>
-            <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10 }}>Data room files</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:8 }}>
-              {files.map((f,i) => (
-                <div key={i} style={{ background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:8, padding:"10px 12px" }}>
-                  <div style={{ fontSize:13, fontWeight:600, color:"#0f172a" }}>{f.title}</div>
-                  <div style={{ fontSize:11, color:"#94a3b8", fontFamily:"monospace", marginTop:3 }}>ID: {f.id}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
@@ -469,29 +512,34 @@ export default function Dashboard() {
   const [noteMsg, setNoteMsg] = useState("");
 
   const fetchAll = useCallback(async () => {
-  try {
-    const [dRes, sRes, kRes] = await Promise.all([
-      fetch("/api/data"),
-      fetch("/api/signals"),
-      fetch("/api/kestrel"),
-    ]);
-    const dJson = await dRes.json();
-    const sJson = await sRes.json();
-    const kJson = await kRes.json();
-    
-    if (dJson.success) {
-      setData({
-        ...dJson.data,
-        kestrel: kJson.success ? kJson.data : null
-      });
-    }
-    if (sJson.success) setSignals(
-      Array.isArray(sJson.data) ? sJson.data : sJson.data?.signals || []
-    );
-    setLastUpdated(new Date().toLocaleTimeString());
-    setError(null);
-  } catch (e) { setError(e.message); }
-}, []);
+    try {
+      const [dRes, sRes, kRes, hRes] = await Promise.all([
+        fetch("/api/data"),
+        fetch("/api/signals"),
+        fetch("/api/kestrel"),
+        fetch("/api/brindle"),
+      ]);
+      const dJson = await dRes.json();
+      const sJson = await sRes.json();
+      const kJson = await kRes.json();
+      const hJson = await hRes.json();
+
+      if (dJson.success) {
+        setData({
+          ...dJson.data,
+          kestrel: kJson.success ? kJson.data : null,
+          brindle: hJson.success ? hJson.data : null,
+        });
+      } else {
+        setError(dJson.error);
+      }
+      if (sJson.success) setSignals(
+        Array.isArray(sJson.data) ? sJson.data : sJson.data?.signals || []
+      );
+      setLastUpdated(new Date().toLocaleTimeString());
+      setError(null);
+    } catch (e) { setError(e.message); }
+  }, []);
 
   useEffect(() => {
     fetchAll();
@@ -518,7 +566,12 @@ export default function Dashboard() {
 
   const accounts = data?.accounts || [];
   const kestrelAccount = buildKestrelAccount(data?.kestrel);
-  const allAccounts = [...accounts, ...(kestrelAccount ? [kestrelAccount] : [])];
+  const brindleAccount = buildBrindleAccount(data?.brindle);
+  const allAccounts = [
+    ...accounts,
+    ...(kestrelAccount ? [kestrelAccount] : []),
+    ...(brindleAccount ? [brindleAccount] : []),
+  ];
 
   const totalClosed = accounts.reduce((s,a) =>
     s + (a.offers||[]).filter(o=>o.status==="won").reduce((x,o)=>x+(o.value||0),0), 0);
@@ -526,10 +579,12 @@ export default function Dashboard() {
   return (
     <div style={{ minHeight:"100vh", background:"#f1f5f9", fontFamily:"Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" }}>
       <div style={{ background:"#0f172a", padding:"0 32px" }}>
-        <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", height:56 }}>
+        <div style={{ maxWidth:1200, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", height:56 }}>
           <div style={{ display:"flex", alignItems:"center", gap:16 }}>
             <span style={{ fontSize:16, fontWeight:800, color:"white" }}>FlytBase CRM</span>
-            <span style={{ fontSize:12, color:"#94a3b8", background:"#1e293b", padding:"3px 10px", borderRadius:20 }}>Kusumanjali · Questathon 2026 · {allAccounts.length} accounts · Live via MCP</span>
+            <span style={{ fontSize:12, color:"#94a3b8", background:"#1e293b", padding:"3px 10px", borderRadius:20 }}>
+              Kusumanjali · Questathon 2026 · {allAccounts.length} accounts · Live via MCP
+            </span>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:20 }}>
             {signals.length > 0 && (
@@ -545,14 +600,14 @@ export default function Dashboard() {
 
       {signals.length > 0 && (
         <div style={{ background:"#fef2f2", borderBottom:"2px solid #ef4444", padding:"10px 32px" }}>
-          <div style={{ maxWidth:1100, margin:"0 auto", fontSize:13, color:"#7f1d1d" }}>
+          <div style={{ maxWidth:1200, margin:"0 auto", fontSize:13, color:"#7f1d1d" }}>
             <strong>Live signals ({signals.length}) — </strong>
             {signals.map(s => s.summary||s.title||s.text||"").join(" · ")}
           </div>
         </div>
       )}
 
-      <div style={{ maxWidth:1100, margin:"28px auto", padding:"0 24px" }}>
+      <div style={{ maxWidth:1200, margin:"28px auto", padding:"0 24px" }}>
         {error && (
           <div style={{ background:"#fef2f2", border:"1px solid #fca5a5", borderRadius:10, padding:14, marginBottom:20, color:"#b91c1c", fontSize:13 }}>
             API error: {error}
@@ -570,6 +625,8 @@ export default function Dashboard() {
               style={{ padding:"9px 14px", borderRadius:8, border:"2px solid #e2e8f0", fontSize:13, fontWeight:600, color:"#374151", background:"white" }}>
               <option value="A">Account A — Police Alliance</option>
               <option value="B">Account B — Aldermoor</option>
+              <option value="K">Account K — Kestrel Estates</option>
+              <option value="H">Account H — Brindle Harbour</option>
             </select>
             <input value={noteText} onChange={e=>setNoteText(e.target.value)}
               placeholder="Next step, risk or action..."
@@ -584,7 +641,7 @@ export default function Dashboard() {
         </div>
 
         <div style={{ textAlign:"center", color:"#94a3b8", fontSize:11, paddingBottom:32 }}>
-          FlytBase Account CRM · Kusumanjali · Questathon 2026 · A+B from /export · K from /pack/K/all · signals from /signals · refreshes every 60s
+          FlytBase Account CRM · Kusumanjali · Questathon 2026 · A+B from /export · K from /pack/K/all · H from /drops/H · signals from /signals · refreshes every 60s
         </div>
       </div>
     </div>
