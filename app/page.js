@@ -11,14 +11,14 @@ const TRUST_STYLES = {
   cold:    { bg: "#fee2e2", text: "#b91c1c", border: "#dc2626" },
 };
 
-const ACCOUNT_COLORS = { A: "#6366f1", B: "#0ea5e9" };
+const ACCOUNT_COLORS = { A: "#6366f1", B: "#0ea5e9", K: "#10b981" };
 
 const STATIC_INTEL = {
   A: {
     moves: [
-      { rank:1, action:"Reply to Karen Mbeki ticket — confirm training dates and support lead for 5 December public event", owner:"Kusumanjali", by:"This week", deal:"a_priority_support + a_training" },
+      { rank:1, action:"Reply to Karen Mbeki ticket in writing — confirm training dates and named support lead for 5 December event", owner:"Kusumanjali", by:"This week", deal:"a_priority_support + a_training" },
       { rank:2, action:"Identify Rhys Calder successor before January and brief them on every open relationship", owner:"Kusumanjali + Achal Negi", by:"Before January 2027", deal:"a_renewal" },
-      { rank:3, action:"Bring Ewan Brooks helicopter vs drone cost comparison from Karen real flight data", owner:"Kusumanjali", by:"This week", deal:"a_extra_docks" },
+      { rank:3, action:"Bring Ewan Brooks helicopter vs drone cost comparison built from Karen real flight data", owner:"Kusumanjali", by:"This week", deal:"a_extra_docks" },
     ],
     risks: [
       { title:"Rhys Calder leaving January", detail:"Only contact on record. No successor named. Every deal passes through him alone.", by:"January 2027", level:"Critical", source:"Signal 17-Nov · rhys_calder" },
@@ -52,6 +52,25 @@ const STATIC_INTEL = {
       { question:"Are the three guard contract renewals tracking drone savings?", matters:"Three contracts renew in four months. First chance to book verified savings into finance.", ask:"Nadia Rahman · fact: nr_evidence_2" },
     ],
   },
+  K: {
+    moves: [
+      { rank:1, action:"Call Dana Whitfield today — first human contact from FlytBase. Acknowledge the unanswered October email and set a go-live plan date", owner:"Kusumanjali", by:"Today", deal:"k_dana_email_or1 — renewal at risk" },
+      { rank:2, action:"Arrange certified pilot for KE-D01 commissioning flight and notify insurer through Lucy Pratt before any flight", owner:"Kusumanjali", by:"Before first flight", deal:"k_golive_or1 — £14,000" },
+      { rank:3, action:"Prepare go-live plan for Dana and board focused on night patrol of two entrances — not mapping the whole estate", owner:"Kusumanjali", by:"Before board meeting", deal:"k_board_pays_or1 — board votes on security budget" },
+    ],
+    risks: [
+      { title:"Dana email unanswered since 19 October", detail:"Customer emailed asking when dock starts flying. Only automatic reply sent. No human contact from FlytBase ever.", by:"Today — 26 days overdue", level:"Critical", source:"emails/2026-10-19_dana_when.txt · verified" },
+      { title:"Dock KE-D01 never commissioned — zero flights", detail:"Registered 14 Sep 2026. Commissioned: null. Zero flights every week since install. Customer paying for nothing.", by:"Needs commissioning now", level:"Critical", source:"devices.json · usage_weekly.csv · verified" },
+      { title:"Insurer not notified — policy void if dock flies", detail:"Insurance schedule confirmed dock not declared. Any aerial equipment must be notified before use. Flying now voids policy.", by:"Before first flight", level:"Critical", source:"K_insurance_schedule_or1 · verified" },
+      { title:"Contract renewal 13 Sep 2027 — no automatic renewal", detail:"£14,000/year contract. No automatic renewal. Customer has never flown. Churn risk is high without go-live before renewal.", by:"13 Sep 2027", level:"High", source:"contract.txt · invoices.json · verified" },
+    ],
+    gaps: [
+      { question:"Who can provide a certified pilot for the commissioning flight?", matters:"Dock cannot fly without one. Operator training was not included in the reseller order.", ask:"Kusumanjali + FlytBase ops team · fact: k_not_commissioned_or1" },
+      { question:"Has Lucy Pratt been contacted to notify the insurer?", matters:"Flying without notifying insurer voids property insurance. Must happen before first flight.", ask:"Lucy Pratt · k_lucy_or1" },
+      { question:"What does the board need to approve additional dock budget?", matters:"Any spend beyond original purchase needs board vote first Monday of each month.", ask:"Graham Okafor · k_graham_or1" },
+      { question:"Has the south entrance ever been assessed for drone coverage?", matters:"Dana wants second dock for south entrance but it was never assessed at install.", ask:"Dana Whitfield · k_south_unassessed_or1" },
+    ],
+  },
 };
 
 const LEVEL_STYLES = {
@@ -68,6 +87,52 @@ function TrustTag({ trust }) {
 function LevelTag({ level }) {
   const s = LEVEL_STYLES[level] || LEVEL_STYLES.Medium;
   return <span style={{ background:s.bg, color:s.text, border:`1.5px solid ${s.border}`, padding:"3px 10px", borderRadius:20, fontSize:12, fontWeight:700 }}>{level}</span>;
+}
+
+function buildKestrelAccount(kestrelData) {
+  if (!kestrelData) return null;
+  const records = kestrelData.records || [];
+  const profile = records.find(r=>r.kind==="profile")?.data;
+  const devices = records.find(r=>r.kind==="devices")?.data;
+  const invoices = records.find(r=>r.kind==="invoices")?.data;
+  const dock = devices?.docks?.[0];
+  const invoice = invoices?.invoices?.[0];
+
+  return {
+    id: "K",
+    name: "Kestrel Estates",
+    official_story: `1 dock paid (KE-D01), 0 flights recorded. Customer waiting since October. No human contact from FlytBase. Contract £${invoice?.amount?.toLocaleString() || "14,000"}/year to ${profile?.renewal?.term_ends || "13 Sep 2027"}.`,
+    stakeholders: [
+      { id:"k_dana_or1", name:"Dana Whitfield", role:"Estate manager", relationship:"warm", available:true },
+      { id:"k_graham_or1", name:"Graham Okafor", role:"Chair, residents board", relationship:"neutral", available:true },
+      { id:"k_lucy_or1", name:"Lucy Pratt", role:"Insurance broker", relationship:"neutral", available:true },
+    ],
+    facts: [
+      { id:"k_dock_never_flown", text:`Dock ${dock?.dock_id || "KE-D01"} registered ${dock?.registered || "14 Sep 2026"}, commissioned: never. Zero flights every week since install. Last seen online ${dock?.last_seen_online || "2026-11-13"}.`, said_by:"FlytBase device records", status:"verified", verified_by:"devices.json + usage_weekly.csv" },
+      { id:"k_contract_or1", text:`Contract: £${invoice?.amount?.toLocaleString() || "14,000"}/year, invoice ${invoice?.number || "INV-26-0921"}, paid by reseller. Term ends ${profile?.renewal?.term_ends || "13 Sep 2027"}. No automatic renewal. Operator training not included.`, said_by:"FlytBase contracts", status:"verified", verified_by:"contract.txt + invoices.json" },
+      { id:"k_dana_email_or1", text:"Dana Whitfield emailed 19 Oct asking when dock starts flying. Only automatic acknowledgement sent. No human reply on file. No FlytBase person has ever spoken to this customer.", said_by:"Dana Whitfield", status:"verified", verified_by:"emails/2026-10-19_dana_when.txt + profile.json" },
+      { id:"k_wrong_usecase", text:"Installer ordered dock for mapping the whole estate. Customer actually needs night patrol of two entrances. These are different requirements.", said_by:"FlytBase deal history", status:"verified", verified_by:"deal_history.json" },
+      { id:"k_insurer_not_told_or1", text:"Insurance schedule confirmed: dock not declared. Policy 01 Apr 2026 to 31 Mar 2027. Any new aerial or robotic equipment must be notified to insurer before use. Flying now voids policy.", said_by:"Lucy Pratt", status:"verified", verified_by:"K_insurance_schedule_or1" },
+      { id:"k_no_pilot_or1", text:"Nobody at the estate holds a drone pilot certificate. Dana assumed the system flies itself once switched on. Operator training was not included in the reseller order.", said_by:"Dana Whitfield", status:"told", verified_by:"k_not_commissioned_or1" },
+    ],
+    offers: [],
+    opportunities: [
+      { id:"k_golive_or1", title:"Get north-entrance dock flying night patrols", stage:"qualified", worth_up_to:14000, blocker:{text:"No certified pilot, dock KE-D01 never commissioned, insurer not notified",status:"open"}, deadline:{text:"Board meeting: residents vote on renewing security budget",soon:true,passed:false} },
+      { id:"k_south_or1", title:"Second dock for south entrance", stage:"identified", worth_up_to:null, blocker:null, deadline:null },
+    ],
+    deadlines: [
+      { text:"Go-live plan promised to Dana — overdue since October 2026", passed:false },
+      { text:"Contract renewal: 13 Sep 2027. No automatic renewal. Customer has never flown.", passed:false },
+    ],
+    files: [
+      { id:"contract.txt", title:"Contract — £14,000/year INV-26-0921 paid by reseller", account:"K" },
+      { id:"devices.json", title:"Device KE-D01 — registered 14 Sep, never commissioned", account:"K" },
+      { id:"usage_weekly.csv", title:"Usage — 0 flights every week since install", account:"K" },
+      { id:"emails/2026-10-19_dana_when.txt", title:"Dana email — unanswered since 19 Oct 2026", account:"K" },
+      { id:"invoices.json", title:"Invoice INV-26-0921 — £14,000 paid by reseller", account:"K" },
+      { id:"K_insurance_schedule_or1", title:"Insurance schedule — dock not declared", account:"K" },
+    ],
+  };
 }
 
 function AccountPanel({ account, signals }) {
@@ -97,20 +162,18 @@ function AccountPanel({ account, signals }) {
 
   return (
     <div style={{ background:"white", borderRadius:16, border:"1px solid #e2e8f0", overflow:"hidden", marginBottom:28, boxShadow:"0 4px 20px rgba(0,0,0,0.06)" }}>
-      
-      {/* Header */}
+
       <div style={{ background:color, padding:"20px 28px", display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <div>
           <div style={{ fontSize:18, fontWeight:800, color:"white" }}>{account.name}</div>
           <div style={{ fontSize:13, color:"rgba(255,255,255,0.75)", marginTop:3 }}>{account.official_story}</div>
         </div>
         <div style={{ textAlign:"right" }}>
-          <div style={{ fontSize:28, fontWeight:900, color:"white" }}>${totalClosed.toLocaleString()}</div>
-          <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)" }}>closed · source: API offers[status=won]</div>
+          <div style={{ fontSize:28, fontWeight:900, color:"white" }}>{totalClosed > 0 ? `$${totalClosed.toLocaleString()}` : "£14,000/yr"}</div>
+          <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)" }}>{totalClosed > 0 ? "closed · source: API offers[status=won]" : "contract value · source: invoices.json"}</div>
         </div>
       </div>
 
-      {/* Signal bar */}
       {acctSignals.length > 0 && (
         <div style={{ background:"#fef2f2", borderBottom:"2px solid #ef4444", padding:"10px 28px", display:"flex", alignItems:"center", gap:8 }}>
           <div style={{ width:8, height:8, borderRadius:"50%", background:"#ef4444", flexShrink:0 }} />
@@ -119,19 +182,17 @@ function AccountPanel({ account, signals }) {
         </div>
       )}
 
-      {/* Deadlines */}
       {deadlines.length > 0 && (
         <div style={{ background:"#fefce8", borderBottom:"2px solid #eab308", padding:"8px 28px" }}>
           {deadlines.map((d,i) => (
-            <span key={i} style={{ fontSize:12, fontWeight:600, color:"#854d0e" }}>Deadline: {d.text}</span>
+            <span key={i} style={{ fontSize:12, fontWeight:600, color:"#854d0e", marginRight:16 }}>Deadline: {d.text}</span>
           ))}
         </div>
       )}
 
-      {/* Stats */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(5,1fr)", borderBottom:"1px solid #f1f5f9" }}>
         {[
-          { label:"Closed", val:`$${totalClosed.toLocaleString()}`, bg:"#f0fdf4", color:"#15803d", border:"#bbf7d0" },
+          { label:"Closed", val: totalClosed > 0 ? `$${totalClosed.toLocaleString()}` : account.id==="K" ? "£14K/yr" : "—", bg:"#f0fdf4", color:"#15803d", border:"#bbf7d0" },
           { label:"Opportunities", val:opportunities.length, bg:"#eff6ff", color:"#1d4ed8", border:"#bfdbfe" },
           { label:"Verified facts", val:verifiedFacts.length, bg:"#f5f3ff", color:"#6d28d9", border:"#c4b5fd" },
           { label:"Files", val:files.length, bg:"#fefce8", color:"#854d0e", border:"#fef08a" },
@@ -144,7 +205,6 @@ function AccountPanel({ account, signals }) {
         ))}
       </div>
 
-      {/* Tabs */}
       <div style={{ display:"flex", borderBottom:"2px solid #f1f5f9", paddingLeft:28 }}>
         {tabs.map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
@@ -160,24 +220,26 @@ function AccountPanel({ account, signals }) {
 
       <div style={{ padding:28 }}>
 
-        {/* OVERVIEW */}
         {tab==="Overview" && (
           <div>
-            {/* Q1 */}
             <div style={{ marginBottom:28 }}>
               <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Q1 — What is the book worth?</div>
               <div style={{ border:"1px solid #e2e8f0", borderRadius:10, overflow:"hidden" }}>
-                {wonOffers.map((o,i) => (
+                {wonOffers.length > 0 ? wonOffers.map((o,i) => (
                   <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background: i%2===0?"#f8fafc":"white", borderBottom: i<wonOffers.length-1?"1px solid #f1f5f9":"none" }}>
                     <div>
                       <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>{o.title}</div>
-                      <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>
-                        Source: <span style={{ color:color, fontWeight:700, fontFamily:"monospace" }}>{o.id}</span> · pitched to: {o.pitch_to} · status: {o.status}
-                      </div>
+                      <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>Source: <span style={{ color:color, fontWeight:700, fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to} · status: {o.status}</div>
                     </div>
                     <div style={{ fontSize:16, fontWeight:800, color:"#15803d", background:"#dcfce7", padding:"4px 12px", borderRadius:8, marginLeft:20, flexShrink:0 }}>${o.value.toLocaleString()}</div>
                   </div>
-                ))}
+                )) : (
+                  <div style={{ padding:"16px", background:"#f8fafc" }}>
+                    <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>Platform subscription — £14,000/year</div>
+                    <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>Source: <span style={{ color:color, fontWeight:700, fontFamily:"monospace" }}>INV-26-0921</span> · paid by reseller 14 Sep 2026 · verified by invoices.json</div>
+                    <div style={{ fontSize:12, color:"#dc2626", marginTop:4 }}>Dock KE-D01 has never flown. Customer has not received value yet.</div>
+                  </div>
+                )}
                 {declinedOffers.map((o,i) => (
                   <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:"#fef2f2", borderTop:"1px solid #fecaca" }}>
                     <div>
@@ -187,10 +249,19 @@ function AccountPanel({ account, signals }) {
                     <div style={{ fontSize:14, color:"#94a3b8", marginLeft:20 }}>${o.value.toLocaleString()}</div>
                   </div>
                 ))}
+                {opportunities.map((o,i) => (
+                  <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"12px 16px", background:"#eff6ff", borderTop:"1px solid #bfdbfe" }}>
+                    <div>
+                      <div style={{ fontSize:14, fontWeight:600, color:"#1d4ed8" }}>{o.title} <span style={{ fontSize:11, color:"#64748b" }}>{o.stage}</span></div>
+                      <div style={{ fontSize:12, color:"#dc2626", marginTop:2 }}>{o.blocker ? `Blocker: ${o.blocker.text}` : "No blocker"}</div>
+                      <div style={{ fontSize:11, color:"#64748b", fontFamily:"monospace", marginTop:2 }}>ID: {o.id}</div>
+                    </div>
+                    <div style={{ fontSize:14, fontWeight:700, color:"#1d4ed8", marginLeft:20 }}>{o.worth_up_to ? `up to $${o.worth_up_to.toLocaleString()}` : "TBD"}</div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Q3 */}
             <div>
               <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Q3 — What do you do first?</div>
               <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
@@ -212,7 +283,6 @@ function AccountPanel({ account, signals }) {
           </div>
         )}
 
-        {/* PEOPLE */}
         {tab==="People" && (
           <div>
             <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Q2 — Who holds the power?</div>
@@ -226,79 +296,115 @@ function AccountPanel({ account, signals }) {
                     </div>
                     <TrustTag trust={p.relationship} />
                   </div>
+                  {p.note && <div style={{ fontSize:12, color:"#475569", lineHeight:1.5, marginBottom:6 }}>{p.note}</div>}
                   <div style={{ fontSize:11, color:"#94a3b8", fontFamily:"monospace" }}>ID: {p.id}</div>
-                  <div style={{ fontSize:11, color:p.available?"#15803d":"#b91c1c", marginTop:4, fontWeight:600 }}>
-                    {p.available ? "Available" : "Unavailable"}
-                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* DEALS */}
         {tab==="Deals" && (
           <div>
-            <div style={{ fontSize:11, fontWeight:800, color:"#15803d", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dcfce7", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Closed (offers won)</div>
-            {wonOffers.map((o,i) => (
-              <div key={i} style={{ padding:"12px 16px", background:"#f0fdf4", border:"1.5px solid #bbf7d0", borderRadius:10, marginBottom:8 }}>
-                <div style={{ display:"flex", justifyContent:"space-between" }}>
-                  <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>{o.title}</div>
-                  <div style={{ fontSize:16, fontWeight:800, color:"#15803d" }}>${o.value.toLocaleString()}</div>
-                </div>
-                <div style={{ fontSize:12, color:"#16a34a", marginTop:4 }}>ID: <span style={{ fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to}</div>
+            {wonOffers.length > 0 && (
+              <div style={{ marginBottom:20 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#15803d", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dcfce7", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Closed</div>
+                {wonOffers.map((o,i) => (
+                  <div key={i} style={{ padding:"12px 16px", background:"#f0fdf4", border:"1.5px solid #bbf7d0", borderRadius:10, marginBottom:8 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between" }}>
+                      <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>{o.title}</div>
+                      <div style={{ fontSize:16, fontWeight:800, color:"#15803d" }}>${o.value.toLocaleString()}</div>
+                    </div>
+                    <div style={{ fontSize:12, color:"#16a34a", marginTop:4 }}>ID: <span style={{ fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to}</div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
 
-            <div style={{ fontSize:11, fontWeight:800, color:"#1d4ed8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, marginTop:20, background:"#dbeafe", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Opportunities (pipeline)</div>
-            {opportunities.map((o,i) => (
-              <div key={i} style={{ padding:"12px 16px", background:"#eff6ff", border:"1.5px solid #bfdbfe", borderRadius:10, marginBottom:8 }}>
-                <div style={{ display:"flex", justifyContent:"space-between" }}>
-                  <div style={{ fontSize:14, fontWeight:600, color:"#1d4ed8" }}>{o.title}</div>
-                  <div style={{ fontSize:14, fontWeight:700, color:"#1d4ed8" }}>up to ${(o.worth_up_to||0).toLocaleString()}</div>
+            {account.id === "K" && (
+              <div style={{ marginBottom:20 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#15803d", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dcfce7", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Contract</div>
+                <div style={{ padding:"12px 16px", background:"#f0fdf4", border:"1.5px solid #bbf7d0", borderRadius:10 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between" }}>
+                    <div style={{ fontSize:14, fontWeight:600, color:"#0f172a" }}>Platform subscription — 1 dock KE-D01</div>
+                    <div style={{ fontSize:16, fontWeight:800, color:"#15803d" }}>£14,000/yr</div>
+                  </div>
+                  <div style={{ fontSize:12, color:"#16a34a", marginTop:4 }}>Source: <span style={{ fontFamily:"monospace" }}>INV-26-0921</span> · paid by reseller · verified by invoices.json + contract.txt</div>
+                  <div style={{ fontSize:12, color:"#dc2626", marginTop:4 }}>Dock KE-D01 never commissioned. Customer has not received value.</div>
                 </div>
-                <div style={{ fontSize:12, color:"#64748b", marginTop:2 }}>Stage: {o.stage} · ID: <span style={{ fontFamily:"monospace" }}>{o.id}</span></div>
-                {o.blocker && <div style={{ fontSize:12, color:"#dc2626", marginTop:4, fontWeight:500 }}>Blocker: {o.blocker.text}</div>}
-                {o.deadline && <div style={{ fontSize:12, color:"#b45309", marginTop:4, fontWeight:600 }}>Deadline: {o.deadline.text}</div>}
               </div>
-            ))}
+            )}
+
+            <div style={{ marginBottom:20 }}>
+              <div style={{ fontSize:11, fontWeight:800, color:"#1d4ed8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dbeafe", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Opportunities</div>
+              {opportunities.map((o,i) => (
+                <div key={i} style={{ padding:"12px 16px", background:"#eff6ff", border:"1.5px solid #bfdbfe", borderRadius:10, marginBottom:8 }}>
+                  <div style={{ display:"flex", justifyContent:"space-between" }}>
+                    <div style={{ fontSize:14, fontWeight:600, color:"#1d4ed8" }}>{o.title} <span style={{ fontSize:11, color:"#64748b" }}>{o.stage}</span></div>
+                    <div style={{ fontSize:15, fontWeight:700, color:"#1d4ed8" }}>{o.worth_up_to ? `up to $${o.worth_up_to.toLocaleString()}` : "TBD"}</div>
+                  </div>
+                  {o.blocker && <div style={{ fontSize:12, color:"#dc2626", marginTop:4 }}>Blocker: {o.blocker.text}</div>}
+                  {o.deadline && <div style={{ fontSize:12, color:"#b45309", marginTop:4, fontWeight:600 }}>Deadline: {o.deadline.text}</div>}
+                  <div style={{ fontSize:11, color:"#64748b", fontFamily:"monospace", marginTop:4 }}>ID: {o.id}</div>
+                </div>
+              ))}
+            </div>
+
+            {declinedOffers.length > 0 && (
+              <div>
+                <div style={{ fontSize:11, fontWeight:800, color:"#b91c1c", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#fee2e2", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Declined</div>
+                {declinedOffers.map((o,i) => (
+                  <div key={i} style={{ padding:"12px 16px", background:"#fef2f2", border:"1.5px solid #fecaca", borderRadius:10, marginBottom:8 }}>
+                    <div style={{ display:"flex", justifyContent:"space-between" }}>
+                      <div style={{ fontSize:14, fontWeight:600, color:"#64748b" }}>{o.title}</div>
+                      <div style={{ fontSize:14, color:"#94a3b8" }}>${o.value.toLocaleString()}</div>
+                    </div>
+                    <div style={{ fontSize:12, color:"#94a3b8", marginTop:4 }}>ID: <span style={{ fontFamily:"monospace" }}>{o.id}</span> · {o.pitch_to}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* FACTS */}
         {tab==="Facts" && (
           <div>
-            <div style={{ marginBottom:20 }}>
-              <div style={{ fontSize:11, fontWeight:800, color:"#6d28d9", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#f5f3ff", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Verified ({verifiedFacts.length})</div>
-              {verifiedFacts.map((f,i) => (
-                <div key={i} style={{ padding:"10px 14px", background:"#f5f3ff", border:"1.5px solid #c4b5fd", borderRadius:8, marginBottom:8 }}>
-                  <div style={{ fontSize:13, color:"#4c1d95", fontWeight:500 }}>{f.text}</div>
-                  <div style={{ fontSize:11, color:"#7c3aed", marginTop:4 }}>ID: <span style={{ fontFamily:"monospace" }}>{f.id}</span> · {f.said_by} · verified by: <span style={{ fontFamily:"monospace" }}>{f.verified_by}</span></div>
-                </div>
-              ))}
-            </div>
-            <div style={{ marginBottom:20 }}>
-              <div style={{ fontSize:11, fontWeight:800, color:"#1d4ed8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dbeafe", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Told ({toldFacts.length})</div>
-              {toldFacts.map((f,i) => (
-                <div key={i} style={{ padding:"10px 14px", background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:8, marginBottom:6 }}>
-                  <div style={{ fontSize:13, color:"#1e293b" }}>{f.text}</div>
-                  <div style={{ fontSize:11, color:"#94a3b8", marginTop:3 }}>ID: <span style={{ fontFamily:"monospace" }}>{f.id}</span> · {f.said_by}</div>
-                </div>
-              ))}
-            </div>
-            <div>
-              <div style={{ fontSize:11, fontWeight:800, color:"#854d0e", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#fefce8", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Claims — unverified ({claimFacts.length})</div>
-              {claimFacts.map((f,i) => (
-                <div key={i} style={{ padding:"10px 14px", background:"#fefce8", border:"1px solid #fef08a", borderRadius:8, marginBottom:6 }}>
-                  <div style={{ fontSize:13, color:"#78350f" }}>{f.text}</div>
-                  <div style={{ fontSize:11, color:"#92400e", marginTop:3 }}>ID: <span style={{ fontFamily:"monospace" }}>{f.id}</span> · {f.said_by} · unverified claim</div>
-                </div>
-              ))}
-            </div>
+            {verifiedFacts.length > 0 && (
+              <div style={{ marginBottom:20 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#6d28d9", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#f5f3ff", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Verified — backed by files ({verifiedFacts.length})</div>
+                {verifiedFacts.map((f,i) => (
+                  <div key={i} style={{ padding:"10px 14px", background:"#f5f3ff", border:"1.5px solid #c4b5fd", borderRadius:8, marginBottom:8 }}>
+                    <div style={{ fontSize:13, color:"#4c1d95", fontWeight:500 }}>{f.text}</div>
+                    <div style={{ fontSize:11, color:"#7c3aed", marginTop:4 }}>ID: <span style={{ fontFamily:"monospace" }}>{f.id}</span> · {f.said_by} · verified by: <span style={{ fontFamily:"monospace" }}>{f.verified_by}</span></div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {toldFacts.length > 0 && (
+              <div style={{ marginBottom:20 }}>
+                <div style={{ fontSize:11, fontWeight:800, color:"#1d4ed8", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#dbeafe", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Told — what stakeholders said ({toldFacts.length})</div>
+                {toldFacts.map((f,i) => (
+                  <div key={i} style={{ padding:"10px 14px", background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:8, marginBottom:6 }}>
+                    <div style={{ fontSize:13, color:"#1e293b" }}>{f.text}</div>
+                    <div style={{ fontSize:11, color:"#94a3b8", marginTop:3 }}>ID: <span style={{ fontFamily:"monospace" }}>{f.id}</span> · {f.said_by}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {claimFacts.length > 0 && (
+              <div>
+                <div style={{ fontSize:11, fontWeight:800, color:"#854d0e", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10, background:"#fefce8", display:"inline-block", padding:"3px 10px", borderRadius:6 }}>Claims — unverified ({claimFacts.length})</div>
+                {claimFacts.map((f,i) => (
+                  <div key={i} style={{ padding:"10px 14px", background:"#fefce8", border:"1px solid #fef08a", borderRadius:8, marginBottom:6 }}>
+                    <div style={{ fontSize:13, color:"#78350f" }}>{f.text}</div>
+                    <div style={{ fontSize:11, color:"#92400e", marginTop:3 }}>ID: <span style={{ fontFamily:"monospace" }}>{f.id}</span> · {f.said_by} · unverified claim</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
-        {/* RISKS */}
         {tab==="Risks" && (
           <div>
             <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Q4 — What is about to go wrong?</div>
@@ -321,7 +427,6 @@ function AccountPanel({ account, signals }) {
           </div>
         )}
 
-        {/* GAPS */}
         {tab==="Gaps" && (
           <div>
             <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:14 }}>Q5 — What do you still not know?</div>
@@ -332,6 +437,20 @@ function AccountPanel({ account, signals }) {
                 <span style={{ fontSize:12, fontWeight:700, color:"white", background:"#9333ea", padding:"3px 10px", borderRadius:6 }}>Ask: {g.ask}</span>
               </div>
             ))}
+          </div>
+        )}
+
+        {files.length > 0 && tab==="Overview" && (
+          <div style={{ marginTop:24 }}>
+            <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:10 }}>Data room files</div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:8 }}>
+              {files.map((f,i) => (
+                <div key={i} style={{ background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:8, padding:"10px 12px" }}>
+                  <div style={{ fontSize:13, fontWeight:600, color:"#0f172a" }}>{f.title}</div>
+                  <div style={{ fontSize:11, color:"#94a3b8", fontFamily:"monospace", marginTop:3 }}>ID: {f.id}</div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -350,19 +469,29 @@ export default function Dashboard() {
   const [noteMsg, setNoteMsg] = useState("");
 
   const fetchAll = useCallback(async () => {
-    try {
-      const [dRes, sRes] = await Promise.all([
-        fetch("/api/data"),
-        fetch("/api/signals"),
-      ]);
-      const dJson = await dRes.json();
-      const sJson = await sRes.json();
-      if (dJson.success) setData(dJson.data);
-      else setError(dJson.error);
-      if (sJson.success) setSignals(Array.isArray(sJson.data) ? sJson.data : sJson.data?.signals || []);
-      setLastUpdated(new Date().toLocaleTimeString());
-    } catch (e) { setError(e.message); }
-  }, []);
+  try {
+    const [dRes, sRes, kRes] = await Promise.all([
+      fetch("/api/data"),
+      fetch("/api/signals"),
+      fetch("/api/kestrel"),
+    ]);
+    const dJson = await dRes.json();
+    const sJson = await sRes.json();
+    const kJson = await kRes.json();
+    
+    if (dJson.success) {
+      setData({
+        ...dJson.data,
+        kestrel: kJson.success ? kJson.data : null
+      });
+    }
+    if (sJson.success) setSignals(
+      Array.isArray(sJson.data) ? sJson.data : sJson.data?.signals || []
+    );
+    setLastUpdated(new Date().toLocaleTimeString());
+    setError(null);
+  } catch (e) { setError(e.message); }
+}, []);
 
   useEffect(() => {
     fetchAll();
@@ -388,18 +517,19 @@ export default function Dashboard() {
   }
 
   const accounts = data?.accounts || [];
-  const files = data?.files || [];
+  const kestrelAccount = buildKestrelAccount(data?.kestrel);
+  const allAccounts = [...accounts, ...(kestrelAccount ? [kestrelAccount] : [])];
+
   const totalClosed = accounts.reduce((s,a) =>
     s + (a.offers||[]).filter(o=>o.status==="won").reduce((x,o)=>x+(o.value||0),0), 0);
 
   return (
     <div style={{ minHeight:"100vh", background:"#f1f5f9", fontFamily:"Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" }}>
-      {/* Nav */}
       <div style={{ background:"#0f172a", padding:"0 32px" }}>
         <div style={{ maxWidth:1100, margin:"0 auto", display:"flex", justifyContent:"space-between", alignItems:"center", height:56 }}>
           <div style={{ display:"flex", alignItems:"center", gap:16 }}>
             <span style={{ fontSize:16, fontWeight:800, color:"white" }}>FlytBase CRM</span>
-            <span style={{ fontSize:12, color:"#94a3b8", background:"#1e293b", padding:"3px 10px", borderRadius:20 }}>Kusumanjali · Questathon 2026 · Live via MCP</span>
+            <span style={{ fontSize:12, color:"#94a3b8", background:"#1e293b", padding:"3px 10px", borderRadius:20 }}>Kusumanjali · Questathon 2026 · {allAccounts.length} accounts · Live via MCP</span>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:20 }}>
             {signals.length > 0 && (
@@ -413,7 +543,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Global signal bar */}
       {signals.length > 0 && (
         <div style={{ background:"#fef2f2", borderBottom:"2px solid #ef4444", padding:"10px 32px" }}>
           <div style={{ maxWidth:1100, margin:"0 auto", fontSize:13, color:"#7f1d1d" }}>
@@ -430,30 +559,10 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Accounts from live API */}
-        {accounts.map((acc,i) => (
-          <AccountPanel key={i} account={{
-            ...acc,
-            files: files.filter(f => f.account === acc.id)
-          }} signals={signals} />
+        {allAccounts.map((acc,i) => (
+          <AccountPanel key={i} account={acc} signals={signals} />
         ))}
 
-        {/* Files section */}
-        {files.length > 0 && (
-          <div style={{ background:"white", border:"1px solid #e2e8f0", borderRadius:12, padding:20, marginBottom:24 }}>
-            <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12 }}>Data room files</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:8 }}>
-              {files.map((f,i) => (
-                <div key={i} style={{ background:"#f8fafc", border:"1px solid #e2e8f0", borderRadius:8, padding:"10px 12px" }}>
-                  <div style={{ fontSize:13, fontWeight:600, color:"#0f172a" }}>{f.title}</div>
-                  <div style={{ fontSize:11, color:"#94a3b8", fontFamily:"monospace", marginTop:3 }}>ID: {f.id} · Account {f.account}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Notes */}
         <div style={{ background:"white", border:"2px solid #e2e8f0", borderRadius:12, padding:20, marginBottom:24 }}>
           <div style={{ fontSize:11, fontWeight:800, color:"#64748b", textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12 }}>Write a note to MCP</div>
           <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
@@ -475,7 +584,7 @@ export default function Dashboard() {
         </div>
 
         <div style={{ textAlign:"center", color:"#94a3b8", fontSize:11, paddingBottom:32 }}>
-          FlytBase Account CRM · Kusumanjali · Questathon 2026 · All data live from MCP API · refreshes every 60s
+          FlytBase Account CRM · Kusumanjali · Questathon 2026 · A+B from /export · K from /pack/K/all · signals from /signals · refreshes every 60s
         </div>
       </div>
     </div>
